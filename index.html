@@ -1,0 +1,224 @@
+<!DOCTYPE html5>
+<html>
+
+<head>
+  <title></title>
+  <style>
+    html {
+      background-color: #667;
+    }
+
+    canvas {
+      background-color: #445;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+
+      width: 600px;
+      height: 600px;
+
+      display: block;
+      content: "";
+      box-sizing: border-box;
+      border: 2px solid #fff;
+
+      perspective: 400;
+      transform-style: preserve-3d;
+      /*transform: rotateX(45deg) rotateZ(45deg);*/
+    }
+
+    img{display: none}
+
+    #scoreboard {
+      background-color: black;
+      border: 2px solid #fff;
+      color: goldenrod;
+      margin: 50 auto;
+      padding: 10px;
+      width: 100px;
+    }
+  </style>
+
+  <script type='text/javascript'>
+    'use strict';
+
+    window.onload = function () {
+      console.log('running')
+      
+      var c
+      var ctx
+      var vW = innerWidth
+      var vH = innerWidth
+      var imgS = 100
+      var unit = imgS/2
+      
+      var scoreboard = document.getElementById('scoreboard');
+      var pts = 0
+      var speed = 3
+
+      var foe
+      var hero
+      var gerd_1
+      var gerd_2
+      var gerd_3
+
+      var actors = []
+
+      var actors
+      var head = document.getElementById('head');
+      var coffee = document.getElementById('coffee');
+      var gerd = document.getElementById('gerd');
+
+      var init = () => {
+
+
+        foe    = new createFoe(rando(0, vW), rando(0, vH), coffee,5)
+        hero   = new createHero(rando(0, vW), rando(0, vH), head,2)
+
+      
+    
+
+        setInterval(() => {
+          foe.dodge()
+          for (var i = 0; i < actors.length; i++) {
+            actors[i].dodge()
+          }
+
+          }, 1000);
+        createCanvas()
+      }
+
+
+      function createActors(i,tag,img){
+        var item = new createGerd(rando(0, vW), rando(0, vH), gerd,5)
+        actors.push(item)
+      }
+
+      var rando       = (minVal, maxVal) => Math.floor(Math.random() * (maxVal - minVal - 1)) + minVal
+      var rng         = () => (Math.floor(Math.random() * 3) - 1) 
+      
+      var dist        = (x1, y1, x2, y2) => Math.floor(Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))
+      var didContact  = (a, b, c) => dist(a.x, a.y, b.x, b.y) < c ? true : false;
+
+      var randoHex    = () => '#' + Math.random().toString(16).slice(2, 8).toUpperCase();
+
+      class createObj {
+        constructor(x1, y1, img, speedMod = 1) {
+          this.x = x1
+          this.y = y1
+          this.img = img
+
+          this.xspeed = 0
+          this.yspeed = 0
+
+          this.direction = (xs, ys) => {
+            this.xspeed = xs/speedMod
+            this.yspeed = ys/speedMod
+          }
+          this.update = () =>{ 
+            mvObj(this)
+            collisionCheck(this);
+            drawObj(this)
+          }
+        }
+      }
+
+      var collisionCheck = (obj) =>{
+          if (obj.img !== head && hero.collision(obj, imgS*.85)) { 
+            drankCoffee(obj)
+          }
+      }
+
+      var mvObj = (obj) =>{
+        if (obj.x > (vW - unit))   obj.x = unit
+        if (obj.x < unit)          obj.x = (vW - unit)
+        if (obj.y > (vH - unit))   obj.y = unit
+        if (obj.y < unit)          obj.y = (vH - unit)
+        obj.x = obj.x + obj.xspeed * unit / 10
+        obj.y = obj.y + obj.yspeed * unit / 10
+
+      }
+
+      class createHero extends createObj {
+         collision(that, range) {
+          return didContact(this, that, range)
+        }
+      }
+
+      class createFoe extends createObj {
+        dodge() {
+          this.direction(rng(), rng())
+        }
+      }
+
+      class createGerd extends createFoe {}
+
+      var createCanvas = function () {
+        c = document.getElementById("feild")
+        c.width = vW
+        c.height = vH
+        ctx = c.getContext("2d")
+
+        var step = () => {
+          ctx.clearRect(0, 0, c.width, c.height)
+          draw()
+          requestAnimationFrame(step);
+        }
+        step();
+      }
+
+      function drankCoffee(obj){
+        var ingested = obj.img.id
+        obj.x = rando(0, vW)
+          obj.y = rando(0, vH)
+        if(ingested === 'coffee'){
+          createActors(gerd)
+          pts = pts + 1;
+        }else{
+          pts = pts - 1;
+        }
+         scoreboard.innerHTML = 'SCORE: ' + pts;
+      }
+
+      function draw() {
+        foe.update()
+        for (var i = 0; i < actors.length; i++) {
+          actors[i].update()
+        }
+        hero.update()
+      }
+
+      function drawObj(obj) {
+        ctx.drawImage(obj.img, obj.x,obj.y, imgS,imgS);
+        ctx.fill()
+      }
+ 
+
+      var keyBoard = {
+        38: (o) => o.direction(0, -1),
+        40: (o) => o.direction(0, 1),
+        39: (o) => o.direction(1, 0),
+        37: (o) => o.direction(-1, 0),
+      };
+
+      window.addEventListener("keydown", function (e) {
+        if (keyBoard[e.keyCode]) { keyBoard[e.keyCode](hero) }
+      })
+      init();
+
+    }
+  </script>
+
+  <body>
+
+    <canvas id='feild'></canvas>
+    <img id="head" src='./head.png'>
+    <img id="coffee" src='./coffee.png'>
+    <img id="gerd" src='./gerd.png'>
+    <div id="scoreboard">SCORE: 0</div>
+  </body>
+
+</html>
