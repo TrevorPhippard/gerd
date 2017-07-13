@@ -138,8 +138,8 @@
 
       var c
       var ctx
-      var vW = innerWidth
-      var vH = innerHeight * .7
+      var vW   = innerWidth
+      var vH   = innerHeight * .7
       var imgS = 75
       var unit = imgS / 2
 
@@ -149,22 +149,19 @@
 
       var foe
       var hero
-      var gerd_1
-      var gerd_2
-      var gerd_3
 
       var actors = []
 
-      var actors
-      var head = document.getElementById('head');
-      var coffee = document.getElementById('coffee');
-      var gerd = document.getElementById('gerd');
-      var btns = document.getElementsByClassName('btns');
+      var head    = document.getElementById('head');
+      var coffee  = document.getElementById('coffee');
+      var gerd    = document.getElementById('gerd');
+      var btns    = document.getElementsByClassName('btns');
       var contact = 'ontouchstart' in window || window.DocumentTouch && document instanceof DocumentTouch ? 'touchstart' : 'click';
 
       /*maybe use ids if not many buttons */
       Array.prototype.slice.call(btns).forEach(function (x) {
         x.addEventListener(contact, function (e) {
+          e.preventDefault();
           dispatcher(e.target.id);
         });
       });
@@ -172,8 +169,7 @@
 
       var init = () => {
 
-
-        foe = new createFoe(rando(0, vW), rando(0, vH), coffee, 5)
+        foe  = new createFoe(rando(0, vW), rando(0, vH), coffee, 5)
         hero = new createHero(rando(0, vW), rando(0, vH), head, 2)
 
         setInterval(() => {
@@ -181,14 +177,14 @@
           for (var i = 0; i < actors.length; i++) {
             actors[i].dodge()
           }
-        }, 1000);
+        }, 1500);
         createCanvas()
       }
 
 
       function createActors(i, tag, img) {
         var item = new createGerd(rando(0, vW), rando(0, vH), gerd, 5)
-        actors.push(item)
+            actors.push(item)
       }
 
       var rando = (minVal, maxVal) => Math.floor(Math.random() * (maxVal - minVal - 1)) + minVal
@@ -209,8 +205,8 @@
           this.yspeed = 0
 
           this.direction = (xs, ys) => {
-            this.xspeed = xs / speedMod
-            this.yspeed = ys / speedMod
+            this.xspeed = xs / speedMod*.9
+            this.yspeed = ys / speedMod*.9
           }
           this.update = () => {
             mvObj(this)
@@ -302,11 +298,12 @@
       };
 
       function dispatcher(key) {
-
         hero.direction(keyBoard[key][0], keyBoard[key][1])
       }
 
       window.addEventListener("keydown", function (e) {
+        e.preventDefault();
+
         if (keyBoard[e.keyCode]) {
           dispatcher(e.keyCode + '');
         }
