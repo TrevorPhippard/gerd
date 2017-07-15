@@ -3,7 +3,6 @@ Coffee give me acid reflux, now it's a game to see how much I can drink before a
 
 
 [Demo](https://trevorphippard.github.io/gerd/) - Give it a Try!
-One Paragraph of project description goes here
 
 ## How to Play
 
