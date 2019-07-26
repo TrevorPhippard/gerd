@@ -1,11 +1,12 @@
 # The Gerd Game
-Coffee give me acid reflux, now it's a game to see how much I can drink before a bad time. Srsly, its a game!
+Coffee gave me acid reflux, so now it's a game to see how much I can drink before having a bad time. 
 
 
 [Demo](https://trevorphippard.github.io/gerd/) - Give it a Try!
 
 ## How to Play
 
-* Get the coffee by keypad or buttons
-* avoid acid reflux
-* see how many points you can get
+* Get the coffee by using the keypad or UI buttons
+* Avoid the acid reflux
+* See how many points you can get!
+
